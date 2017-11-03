@@ -25,7 +25,8 @@ class Node:
 class WBT:
     def __init__(self):
         self.root = None
-        self.alpha = 1 / (2 ** .5)
+        self.alpha = 1 - 1 / (2 ** .5)
+        self.alpha = 0.29
 
     def is_balanced(self, node):
         if node is None:
@@ -111,7 +112,7 @@ class WBT:
                 return root
             root.left = self.insert(val, root.left)
             root.refresh_weight()
-            if Node.weight(root.left) > self.alpha * Node.weight(root):
+            if Node.weight(root.left) > (1 - self.alpha) * Node.weight(root):
                 root = self.rotate_right(root)
         else:
             if root.right is None:
@@ -120,7 +121,7 @@ class WBT:
                 return root
             root.right = self.insert(val, root.right)
             root.refresh_weight()
-            if Node.weight(root.right) > self.alpha * Node.weight(root):
+            if Node.weight(root.right) > (1 - self.alpha) * Node.weight(root):
                 root = self.rotate_left(root)
         return root
 
