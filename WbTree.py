@@ -34,7 +34,7 @@ def leftRotate(t):
 
 def weight(t):
 	if t is None:
-		return 0
+		return 1
 	return weight(t.left)+weight(t.right)
 
 class TreeNode:
@@ -44,6 +44,15 @@ class TreeNode:
 		self.right=r
 		self.key=k
 
+	def inorder(self):
+		if self==None:
+			return
+		else:
+			if self.left is not None:
+				self.left.inorder()
+			print(self.key,self.weight)
+			if self.right is not None:
+				self.right.inorder()
 class WBTree:
 	def __init__(self):
 		self.root=None
@@ -51,9 +60,13 @@ class WBTree:
 	def insert(self,x,r="Default"):
 		if r=="Default":
 			r=self.root
+			if self.root is None:
+				self.root=TreeNode(x)
+				self.root.weight=2
+				return
 		if r is None:
-			self.root=TreeNode(x)
-			self.root.weight=2
+			r=TreeNode(x)
+			r.weight=2
 		elif r.key==x:
 			print("Already exists!")
 		else:
@@ -61,8 +74,8 @@ class WBTree:
 				r.right=self.insert(x,r.right)
 			else:
 				r.left=self.insert(x,r.left)
-				t.weight=weight(t.left)+weight(t.right)
-				r=checkRotation(r)
+			r.weight=weight(r.left)+weight(r.right)
+			r=checkRotation(r)
 		return r
 
 	def delete(self,x,t="Default"):
@@ -89,3 +102,18 @@ class WBTree:
 				t.weight=weight(t.left)+weight(t.right)
 				t=checkRotation(t)
 			return t
+
+	def disp(self):
+		if self.root is not None:
+			self.root.inorder()
+
+def main():
+	T=WBTree()
+	data=[2,7,1,0,6]
+	for i in data:
+		T.insert(i)
+	print(T.root.key)
+	T.disp()
+
+if __name__=='__main__':
+	main()
