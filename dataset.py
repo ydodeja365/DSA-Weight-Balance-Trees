@@ -13,4 +13,4 @@ def make(file, n, start, stop, unique=False):
 
 
 if __name__ == '__main__':
-    make(open('data', 'w'), 1000, 0, 5000)
+    make(open('data', 'w'), 100000, 0, 1000000, True)
