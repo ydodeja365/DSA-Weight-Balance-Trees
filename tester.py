@@ -5,15 +5,17 @@ def main():
     tree = WBT()
     data = open('data')
     for val in data:
+        print('\r' + val[:-1], end='')
         tree.insert(int(val))
     data.close()
-    tree.print_tree()
     data = open('data')
     for val in data:
-        if tree.search(int(val)) is None:
-            # print(val)
-            print(':(')
-    print('Done')
+        if not tree.present(int(val)):
+            print('\n:(')
+            break
+    else:
+        print('\nDone')
+    data.close()
 
 
 if __name__ == '__main__':
