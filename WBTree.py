@@ -27,6 +27,7 @@ class WBT:
         self.root = None
         self.alpha = 1 - 1 / (2 ** .5)
         self.alpha = 0.29
+        self.inner_alpha = self.alpha * (2 ** 0.5)
 
     def is_balanced(self, node):
         if node is None:
@@ -99,7 +100,7 @@ class WBT:
             else:
                 self.insert_bin(val, root.right)
 
-    def insert(self, val, root=None):
+    def insert_old(self, val, root=None):
         if root is None:
             root = self.root
         if self.root is None:
@@ -110,7 +111,7 @@ class WBT:
                 root.left = Node(val, root)
                 root.refresh_weight()
                 return root
-            root.left = self.insert(val, root.left)
+            root.left = self.insert_old(val, root.left)
             root.refresh_weight()
             if Node.weight(root.left) > (1 - self.alpha) * Node.weight(root):
                 root = self.rotate_right(root)
@@ -119,57 +120,50 @@ class WBT:
                 root.right = Node(val, root)
                 root.refresh_weight()
                 return root
-            root.right = self.insert(val, root.right)
+            root.right = self.insert_old(val, root.right)
             root.refresh_weight()
             if Node.weight(root.right) > (1 - self.alpha) * Node.weight(root):
                 root = self.rotate_left(root)
         return root
 
-    # def insert_nr(self, val):
-    #     node = Node(val)
-    #     if self.root is None:
-    #         self.root = node
-    #         return
-    #     tmp = self.root
-    #     parent = None
-    #     while tmp is not None:
-    #         parent = tmp
-    #         tmp = tmp.left if val <= tmp.val else tmp.right
-    #     node.parent = parent
-    #     if val <= parent.val:
-    #         parent.left = node
-    #     else:
-    #         parent.right = node
-    #     x = None
-    #     y = node
-    #     z = node.parent
-    #     z.refresh_weight()
-    #     while True:
-    #         while z is not None and self.is_balanced(z):
-    #             x = y
-    #             y = z
-    #             z = z.parent
-    #             if z is not None:
-    #                 z.refresh_weight()
-    #         if z is None:
-    #             return
-    #         z = self.balance(z, y, x).parent
-
-    def balance(self, z, y, x):
-        if z.left == y and y.left == x:
-            self.rotate_right(z)
-            root = y
-        elif z.left == y and y.right == x:
-            self.rotate_left(y)
-            self.rotate_right(z)
-            root = x
-        elif z.right == y and y.right == x:
-            self.rotate_left(z)
-            root = y
+    def insert(self, val, root=None):
+        if self.root is None:
+            self.root = Node(val, root)
+            return self.root
+        if root is None:
+            root = self.root
+        if val == root.val:
+            root.val = val
+            return root
+        elif val < root.val:
+            if root.left is None:
+                root.left = Node(val, root)
+                root.refresh_weight()
+                return root
+            root.left = self.insert(val, root.left)
         else:
-            self.rotate_right(y)
-            self.rotate_left(z)
-            root = x
+            if root.right is None:
+                root.right = Node(val, root)
+                root.refresh_weight()
+                return root
+            root.right = self.insert(val, root.right)
+        root.refresh_weight()
+        root = self.balance(root)
+        return root
+
+    def balance(self, root):
+        if Node.weight(root.left) > (1 - self.alpha) * Node.weight(root):
+            if Node.weight(root.left.left) > self.inner_alpha * Node.weight(root.left):
+                root = self.rotate_right(root)
+            else:
+                root.left = self.rotate_left(root.left)
+                root = self.rotate_right(root)
+        elif Node.weight(root.left) < self.alpha * Node.weight(root):
+            if Node.weight(root.right.left) < (1 - self.inner_alpha) * Node.weight(root.right):
+                root = self.rotate_left(root)
+            else:
+                root.right = self.rotate_right(root.right)
+                root = self.rotate_left(root)
         return root
 
     def present(self, val):
