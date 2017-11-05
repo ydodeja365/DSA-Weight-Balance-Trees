@@ -2,9 +2,11 @@ from WBTree import WBT
 
 
 class Pair:
-    def __init__(self, key, val=None):
+    def __init__(self, key):
         self.key = key
-        self.val = val
+
+    def __eq__(self, other):
+        return self.key == other.key
 
     def __le__(self, other):
         return self.key <= other.key
