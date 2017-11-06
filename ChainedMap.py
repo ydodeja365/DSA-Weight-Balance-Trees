@@ -1,4 +1,6 @@
-# Todo make constructors & method similar to main HashMap 
+from WBTree import WBT
+from Pair import Pair
+
 class ListNode:
     def __init__(self, value=None, nxt=None):
         self.value = value
@@ -9,8 +11,9 @@ class LinkedList:
     def __init__(self):
         self.head = None
 
+    #insert head now sets the value of each node with the key
     def insert_head(self, x):
-        self.head = ListNode(x, self.head)
+        self.head = ListNode(x.key, self.head)
 
     def search(self, x):
         tmp = self.head
@@ -40,11 +43,13 @@ class HashMap:
             h += ord(ch)
         return h % 30
 
-    def insert(self, tup):
-        hkey = self.hash(tup[0])
+    #changed the insert function to accept pair object
+    def insert(self, pair):
+        hkey = self.hash(pair.key)
         if self.arr[hkey] is None:
             self.arr[hkey] = LinkedList()
-        self.arr[hkey].insert_head(tup)
+        self.arr[hkey].insert_head(pair)
+
 
     def search(self, key):
         hkey = self.hash(key)
