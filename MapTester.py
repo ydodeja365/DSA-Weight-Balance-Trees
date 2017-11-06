@@ -6,7 +6,6 @@ class Passenger(Pair):
         Pair.__init__(self, details[-1])
         self.details = details
 
-
 def main():
     data = open('dataset.csv')
     H = HashMap(20)
