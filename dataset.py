@@ -12,5 +12,12 @@ def make(file, n, start, stop, unique=False):
             n -= 1
 
 
+def worst(file, n):
+    while n > 0:
+        file.write(str(n) + '\n')
+        n -= 1
+
+
 if __name__ == '__main__':
-    make(open('data', 'w'), 100000, 0, 1000000, True)
+    make(open('data_sets/data', 'w'), 100000, 0, 1000000, True)
+    # worst(open('data_sets/data', 'w'), 100000)
