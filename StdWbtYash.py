@@ -121,7 +121,7 @@ class WBTree:
 
 
 # def main():
-#     T = WBTree()
+#     T = Tree()
 #     data = [2, 7, 1, 0, 6]
 #     for i in data:
 #         T.insert(i)
@@ -130,12 +130,11 @@ class WBTree:
 
 def main():
     tree = WBTree()
-    data = open('data')
+    data = open('data_sets/data')
     for val in data:
         tree.insert(int(val))
     data.close()
     print(tree.root.weight)
-    # tree.print_tree()
     data = open('data')
     for val in data:
         if not tree.search(int(val)):
@@ -143,6 +142,7 @@ def main():
             break
     else:
         print('Done')
+
 
 if __name__ == '__main__':
     main()
