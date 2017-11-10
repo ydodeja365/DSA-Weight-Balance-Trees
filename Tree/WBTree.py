@@ -14,32 +14,98 @@ class Node:
         self.size = left_size + right_size + 1
         return self.size + 1
 
-    def is_leaf(self):
+    def leaf(self):
         return self.left is None and self.right is None
 
     @staticmethod
     def weight(node):
         return 0 + 1 if node is None else node.size + 1
 
+    def balanced(self):
+        return 1 / 3 <= Node.weight(self.left) / Node.weight(self.right) <= 3
+
 
 class WBT:
     def __init__(self):
         self.root = None
-        self.alpha = 1 - 1 / (2 ** .5)
-        self.alpha = 0.29
-        self.inner_alpha = self.alpha * (2 ** 0.5)
 
-    def is_balanced(self, node):
-        if node is None:
-            return
-        left_condition = Node.weight(node.left) >= self.alpha * Node.weight(node)
-        right_condition = Node.weight(node.right) >= self.alpha * Node.weight(node)
-        return left_condition and right_condition
+    def insert(self, val):
+        if self.root is None:
+            self.root = Node(val)
+            return self.root
+        node_parent = self.root
+        tmp = self.root
+        while tmp is not None and tmp.val != val:
+            node_parent = tmp
+            tmp = tmp.left if val < tmp.val else tmp.right
+        if tmp is not None:
+            tmp.val = val
+            return tmp
+        node = Node(val, node_parent)
+        if node.val < node_parent.val:
+            node_parent.left = node
+        else:
+            node_parent.right = node
+        while node_parent is not None:
+            if not node_parent.balanced():
+                node_parent = self.balance(node_parent)
+            else:
+                node_parent.refresh_weight()
+            node_parent = node_parent.parent
+        return node
+
+    def delete(self, val):
+        node = self.search(val)
+        if node is not None:
+            self.delete_node(node)
+        return node
+
+    def delete_node(self, node):
+        if node.left is None or node.right is None:
+            replacement = node.left if node.right is None else node.right
+            node_parent = node.parent
+            if replacement is not None:
+                replacement.parent = node_parent
+            if node_parent is None:
+                self.root = replacement
+                return
+            if node.val < node_parent.val:
+                node_parent.left = replacement
+            else:
+                node_parent.right = replacement
+            while node_parent is not None:
+                if not node_parent.balanced():
+                    node_parent = self.balance(node_parent)
+                else:
+                    node_parent.refresh_weight()
+                node_parent = node_parent.parent
+        else:
+            successor = self.min(node.right)
+            node.val = successor.val
+            self.delete_node(successor)
+
+    @staticmethod
+    def min(node):
+        while node.left is not None:
+            node = node.left
+        return node
+
+    def balance(self, node):
+        if Node.weight(node.left) * 3 < Node.weight(node.right):
+            if Node.weight(node.left) < 2 * Node.weight(node.right):
+                return self.rotate_left(node)
+            if Node.weight(node.left) >= 2 * Node.weight(node.right):
+                node.right = self.rotate_right(node.right)
+                return self.rotate_left(node)
+        if Node.weight(node.right) * 3 < Node.weight(node.left):
+            if Node.weight(node.right) < 2 * Node.weight(node.left):
+                return self.rotate_right(node)
+            if Node.weight(node.right) >= 2 * Node.weight(node.left):
+                node.left = self.rotate_left(node.left)
+                return self.rotate_right(node)
+        return node
 
     def rotate_right(self, z):
-        if z is None:
-            print('Got None in right rotate')
-            return
         y = z.left
         z.left = y.right
         if y.right is not None:
@@ -60,9 +126,6 @@ class WBT:
         return y
 
     def rotate_left(self, z):
-        if z is None:
-            print('Got None in left rotate')
-            return
         y = z.right
         z.right = y.left
         if y.left is not None:
@@ -80,91 +143,7 @@ class WBT:
             y.parent.refresh_weight()
         else:
             self.root = y
-
         return y
-
-    def insert_bin(self, val, root=None):
-        if root is None:
-            root = self.root
-        if root is None:
-            self.root = Node(val, root)
-            return
-        parent = root
-        while root is not None and root.val != val:
-            parent = root
-            root = root.left if val < root.val else root.right
-        if parent.val == val:
-            parent.val = val
-        elif val < parent.val:
-            parent.left = Node(val, parent)
-        else:
-            parent.right = Node(val, parent)
-
-    def insert_old(self, val, root=None):
-        if root is None:
-            root = self.root
-        if self.root is None:
-            self.root = Node(val, root)
-            return self.root
-        if val <= root.val:
-            if root.left is None:
-                root.left = Node(val, root)
-                root.refresh_weight()
-                return root
-            root.left = self.insert_old(val, root.left)
-            root.refresh_weight()
-            if Node.weight(root.left) > (1 - self.alpha) * Node.weight(root):
-                root = self.rotate_right(root)
-        else:
-            if root.right is None:
-                root.right = Node(val, root)
-                root.refresh_weight()
-                return root
-            root.right = self.insert_old(val, root.right)
-            root.refresh_weight()
-            if Node.weight(root.right) > (1 - self.alpha) * Node.weight(root):
-                root = self.rotate_left(root)
-        return root
-
-    def insert(self, val, root=None):
-        if self.root is None:
-            self.root = Node(val, root)
-            return self.root
-        if root is None:
-            root = self.root
-        if val == root.val:
-            root.val = val
-            return root
-        elif val < root.val:
-            if root.left is None:
-                root.left = Node(val, root)
-                root.refresh_weight()
-                return root
-            root.left = self.insert(val, root.left)
-        else:
-            if root.right is None:
-                root.right = Node(val, root)
-                root.refresh_weight()
-                return root
-            root.right = self.insert(val, root.right)
-        root.refresh_weight()
-        root = self.balance(root)
-        return root
-
-    def balance(self, root):
-        if Node.weight(root.left) > (1 - self.alpha) * Node.weight(root):
-            if Node.weight(root.left.left) > self.inner_alpha * Node.weight(root.left):
-                root = self.rotate_right(root)
-            else:
-                root.left = self.rotate_left(root.left)
-                root = self.rotate_right(root)
-        elif Node.weight(root.left) < self.alpha * Node.weight(root):
-            if Node.weight(root.right.left) < (1 - self.inner_alpha) * Node.weight(root.right):
-                root = self.rotate_left(root)
-            else:
-                root.right = self.rotate_right(root.right)
-                root = self.rotate_left(root)
-        return root
 
     def present(self, val):
         return self.search(val) is not None
@@ -174,30 +153,6 @@ class WBT:
         while tmp is not None and tmp.val != val:
             tmp = tmp.left if val < tmp.val else tmp.right
         return tmp
-
-    def delete(self, val, root=None):
-        if root is None:
-            root = self.root
-        if root is None:
-            return None
-        if root.val < val:
-            root.right = self.delete(val, root.right)
-        elif root.val > val:
-            root.left = self.delete(val, root.left)
-        elif root.left is None:
-            root = root.right
-        elif root.right is None:
-            root = root.left
-        elif Node.weight(root.left) > Node.weight(root.right):
-            root = self.rotate_right(root)
-            root.right = self.delete(val, root.right)
-        else:
-            root = self.rotate_left(root)
-            root.left = self.delete(val, root.left)
-        if root is not None:
-            root.refresh_weight()
-            root = self.balance(root)
-        return root
 
     def print_tree(self):
         self.print(self.root, -5)
@@ -210,3 +165,8 @@ class WBT:
         print(' ' * space, end='')
         print((root.val, root.size))
         self.print(root.left, space)
+
+    @staticmethod
+    def swap(x, y):
+        # Todo swap nodes instead of copy
+        pass
