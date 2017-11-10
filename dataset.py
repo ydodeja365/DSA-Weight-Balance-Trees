@@ -19,5 +19,5 @@ def worst(file, n):
 
 
 if __name__ == '__main__':
-    make(open('data_sets/data', 'w'), 100000, 0, 1000000, True)
+    make(open('data_sets/data', 'w'), 100000, 0, 10000000, True)
     # worst(open('data_sets/data', 'w'), 100000)
