@@ -168,5 +168,5 @@ class WBT:
 
     @staticmethod
     def swap(x, y):
+    	x,y=y,x
         # Todo swap nodes instead of copy
-        pass

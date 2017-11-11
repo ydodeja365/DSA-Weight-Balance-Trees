@@ -44,7 +44,7 @@ def delete_test():
     for val in data:
         store.append(int(val))
         tree.insert(int(val))
-    data.close()
+    
     for i in range(len(store)):
         if tree.delete(store[i]) is None:
             print('Delete Failed')
@@ -53,9 +53,10 @@ def delete_test():
             if not tree.present(store[j]):
                 print('Delete Failed')
                 break
-    print(tree.root)
+        #tree.print_tree()
+        print(tree.root.size)
 
 
 if __name__ == '__main__':
-    # delete_test()
-    main()
+    delete_test()
+    #main()
