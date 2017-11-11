@@ -34,7 +34,7 @@ def main():
         stop_time = time()
         print('Deleted  %d elements in %fs' % (count, stop_time - start_time))
     data.close()
-    tree.print_tree()
+    print(tree)
 
 
 def delete_test():
@@ -44,7 +44,7 @@ def delete_test():
     for val in data:
         store.append(int(val))
         tree.insert(int(val))
-    
+
     for i in range(len(store)):
         if tree.delete(store[i]) is None:
             print('Delete Failed')
@@ -53,10 +53,9 @@ def delete_test():
             if not tree.present(store[j]):
                 print('Delete Failed')
                 break
-        #tree.print_tree()
         print(tree.root.size)
 
 
 if __name__ == '__main__':
     delete_test()
-    #main()
+    # main()

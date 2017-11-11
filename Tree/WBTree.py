@@ -24,6 +24,9 @@ class Node:
     def balanced(self):
         return 1 / 3 <= Node.weight(self.left) / Node.weight(self.right) <= 3
 
+    def __str__(self):
+        return str((self.val, self.size))
+
 
 class WBT:
     def __init__(self):
@@ -154,19 +157,20 @@ class WBT:
             tmp = tmp.left if val < tmp.val else tmp.right
         return tmp
 
-    def print_tree(self):
-        self.print(self.root, -5)
-
     def print(self, root, space):
         if root is None:
             return
         space += 5
         self.print(root.right, space)
         print(' ' * space, end='')
-        print((root.val, root.size))
+        print(root)
         self.print(root.left, space)
 
     @staticmethod
     def swap(x, y):
-    	x,y=y,x
+        x, y = y, x
         # Todo swap nodes instead of copy
+
+    def __str__(self):
+        self.print(self.root, -5)
+        return ''
