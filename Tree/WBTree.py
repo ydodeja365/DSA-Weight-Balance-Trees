@@ -21,6 +21,10 @@ class Node:
     def weight(node):
         return 0 + 1 if node is None else node.size + 1
 
+    @staticmethod
+    def size(node):
+        return 0 if node is None else node.size
+
     def balanced(self):
         return 1 / 3 <= Node.weight(self.left) / Node.weight(self.right) <= 3
 
@@ -168,9 +172,18 @@ class WBT:
 
     @staticmethod
     def swap(x, y):
-        x, y = y, x
         # Todo swap nodes instead of copy
+        pass
 
     def __str__(self):
         self.print(self.root, -5)
         return ''
+
+    def kth(self, k, root=None):
+        if root is None:
+            root = self.root
+        if Node.size(root.left) + 1 == k:
+            return root
+        if Node.size(root.left) >= k:
+            return self.kth(k, root.left)
+        return self.kth(k - Node.size(root.left) - 1, root.right)
