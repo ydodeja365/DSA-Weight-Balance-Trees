@@ -5,21 +5,21 @@ from HashMaps.HashMap import *
 from HashMaps.ChainedMap import *
 
 
-class Passenger(Pair):
+class Patient(Pair):
     def __init__(self, details):
-        Pair.__init__(self, details[-1])
+        Pair.__init__(self, str(details[1]))
         self.details = details
 
 
 def main(H):
-    data = pd.read_csv('data_sets/titanic.csv')
+    data = pd.read_csv('data_sets/diabetic_data.csv')
     keys = []
     start_time = time()
     count = 0
     for index, row in data.iterrows():
-        passenger = Passenger(tuple(row))
-        keys.append(passenger.key)
-        H.insert(passenger)
+        patient = Patient(tuple(row))
+        keys.append(patient.key)
+        H.update(patient)
         count += 1
     else:
         stop_time = time()
@@ -38,6 +38,6 @@ def main(H):
 
 if __name__ == '__main__':
     print('WBT HashMap')
-    main(HashMap(5))
+    main(HashMap(50))
     print('SLL HashMap')
-    main(ChainedHashMap(5))
+    main(ChainedHashMap(50))
