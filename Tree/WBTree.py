@@ -187,3 +187,61 @@ class WBT:
         if Node.size(root.left) >= k:
             return self.kth(k, root.left)
         return self.kth(k - Node.size(root.left) - 1, root.right)
+
+    def pre_order(self, root=None):
+        if root is None:
+            root = self.root
+        if root is None:
+            return
+        yield root.val
+        if root.left is not None:
+            yield from self.pre_order(root.left)
+        if root.right is not None:
+            yield from self.pre_order(root.right)
+
+    def post_order(self, root=None):
+        if root is None:
+            root = self.root
+        if root is None:
+            return
+        if root.left is not None:
+            yield from self.post_order(root.left)
+        if root.right is not None:
+            yield from self.post_order(root.right)
+        yield root.val
+
+    def in_order(self, root=None):
+        if root is None:
+            root = self.root
+        if root is None:
+            return
+        if root.left is not None:
+            yield from self.in_order(root.left)
+        yield root.val
+        if root.right is not None:
+            yield from self.in_order(root.right)
+
+    def reverse_in_order(self, root=None):
+        if root is None:
+            root = self.root
+        if root is None:
+            return
+        if root.right is not None:
+            yield from self.reverse_in_order(root.right)
+        yield root.val
+        if root.left is not None:
+            yield from self.reverse_in_order(root.left)
+
+    def height(self, node=None):
+        if node is None:
+            node = self.root
+        if node is None:
+            return -1
+        return self.height_internal(node) - 1
+
+    def height_internal(self, node):
+        if node is None:
+            return 0
+        if node.leaf():
+            return 1
+        return 1 + max(self.height_internal(node.left), self.height_internal(node.right))
