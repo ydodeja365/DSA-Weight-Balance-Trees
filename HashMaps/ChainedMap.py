@@ -1,6 +1,9 @@
+from HashMaps.Pair import *
+
+
 class ListNode:
-    def __init__(self, value=None, nxt=None):
-        self.value = value
+    def __init__(self, val=None, nxt=None):
+        self.val = val
         self.next = nxt
 
 
@@ -13,12 +16,22 @@ class LinkedList:
 
     def search(self, x):
         tmp = self.head
-        while tmp is not None and tmp.value.key != x:
+        while tmp is not None and tmp.val != x:
             tmp = tmp.next
-        return tmp.value
+        return tmp.val
+
+    def update(self, x):
+        tmp = self.head
+        while tmp is not None and tmp.val != x:
+            tmp = tmp.next
+        if tmp is None:
+            self.insert_head(x)
+            return False
+        tmp.val = x
+        return True
 
 
-class HashMap:
+class ChainedHashMap:
     def __init__(self, size):
         self.size = size
         self.arr = [None for _ in range(size)]
@@ -39,4 +52,10 @@ class HashMap:
 
     def search(self, key):
         hkey = self.hash(key)
-        return self.arr[hkey].search(key)
+        return self.arr[hkey].search(Pair(key))
+
+    def update(self, pair):
+        hkey = self.hash(pair.key)
+        if self.arr[hkey] is None:
+            self.arr[hkey] = LinkedList()
+        return self.arr[hkey].update(pair)

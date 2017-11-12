@@ -29,3 +29,6 @@ class HashMap:
         if node is None:
             return
         return node.val
+
+    def update(self, pair):
+        self.insert(pair)
